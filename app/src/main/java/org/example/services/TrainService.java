@@ -86,6 +86,10 @@ public class TrainService {
         }
     }
 
+    public List<Train> getAllTrains() {
+        return trainList;
+    }
+
     private boolean validTrain(Train train, String source, String destination) {
         List<String> stationOrder = train.getStations();
 

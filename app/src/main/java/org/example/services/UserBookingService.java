@@ -112,15 +112,58 @@ public class UserBookingService {
 
         if (currentUser.isPresent()) {
             User realUser = currentUser.get();
-            boolean removed = realUser.getTicketsBooked().removeIf(ticket -> ticket.getTicketId().equals(ticketId));
-            if (removed) {
+
+            // Find the ticket to be canceled
+            Optional<Ticket> ticketToCancel = realUser.getTicketsBooked().stream()
+                    .filter(ticket -> ticket.getTicketId().equals(ticketId))
+                    .findFirst();
+
+            if (ticketToCancel.isPresent()) {
+                Ticket ticket = ticketToCancel.get();
+
+                // Get the seat information
+                int seatRow = ticket.getSeatRow();
+                int seatCol = ticket.getSeatCol();
+                Train ticketTrain = ticket.getTrain();
+
+                // Only update the seat if it was actually assigned
+                if (seatRow >= 0 && seatCol >= 0 && ticketTrain != null) {
+                    try {
+                        // Load the train service
+                        TrainService trainService = new TrainService();
+
+                        // Get the train directly by ID
+                        String trainId = ticketTrain.getTrainId();
+
+                        // Get all trains and find the one with matching ID
+                        for (Train t : trainService.getAllTrains()) {
+                            if (t.getTrainId().equals(trainId)) {
+                                // Update the seat to be available (0)
+                                List<List<Integer>> seats = t.getSeats();
+                                if (seatRow < seats.size() && seatCol < seats.get(seatRow).size()) {
+                                    seats.get(seatRow).set(seatCol, 0);
+                                    t.setSeats(seats);
+                                    trainService.updateTrain(t);
+                                    System.out.println("Seat (" + seatRow + "," + seatCol + ") has been freed.");
+                                }
+                                break;
+                            }
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Error updating train data: " + e.getMessage());
+                    }
+                }
+
+                // Remove the ticket from the user's bookings
+                realUser.getTicketsBooked().remove(ticket);
+
                 try {
                     saveUserListToFile();
+                    System.out.println("Ticket with ID " + ticketId + " has been canceled.");
+                    return Boolean.TRUE;
                 } catch (IOException e) {
-                    System.out.println("Error saving after cancellation.");
+                    System.out.println("Error saving after cancellation: " + e.getMessage());
                 }
-                System.out.println("Ticket with ID " + ticketId + " has been canceled.");
-                return Boolean.TRUE;
             } else {
                 System.out.println("No ticket found with ID " + ticketId);
             }
