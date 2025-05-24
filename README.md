@@ -69,9 +69,6 @@ org.example
 
 ---
 
-
----
-
 ## 🚀 How to Use
 
 1. **Start the Application**  
