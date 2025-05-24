@@ -50,20 +50,7 @@ Users can **search for trains** between stations, **book seats**, **view their b
 
 ## 📁 Project Structure
 
-org.example
-├── App.java # Main application entry point
-├── entities
-│ ├── Ticket.java # Ticket entity
-│ ├── Train.java # Train entity
-│ └── User.java # User entity
-├── services
-│ ├── TrainService.java # Train management service
-│ └── UserBookingService.java # User and booking management
-├── util
-│ └── UserServiceUtil.java # Utility functions
-└── localDB
-├── train.json # Train data JSON file
-└── users.json # User data JSON file
+<pre> ```text org.example ├── App.java # Main application entry point ├── entities │ ├── Ticket.java # Ticket entity │ ├── Train.java # Train entity │ └── User.java # User entity ├── services │ ├── TrainService.java # Train management service │ └── UserBookingService.java # User and booking management ├── util │ └── UserServiceUtil.java # Utility functions └── localDB ├── train.json # Train data JSON file └── users.json # User data JSON file ``` </pre>
 
 ---
 
